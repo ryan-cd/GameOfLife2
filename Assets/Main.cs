@@ -5,9 +5,12 @@ using UnityEngine;
 public class Main : MonoBehaviour {
     public int width = 10;
     public int height = 10;
+    public int simulationCount = 20;
+    public Grid grid;
 	// Use this for initialization
 	void Start () {
-		
+        grid = GetComponent<Grid>();
+        grid.GenerateGrid(width, height);
 	}
 	
 	// Update is called once per frame
@@ -21,7 +24,12 @@ public class Main : MonoBehaviour {
         {
             for (int y = 0; y < height; y++)
             {
-                Gizmos.color = x % 2 == 0 ? Color.black : Color.white;
+                if (grid.grid[x, y] == '#')
+                    Gizmos.color = Color.red;
+                else if (grid.grid[x, y] == '*')
+                    Gizmos.color = Color.blue;
+                else
+                    Gizmos.color = Color.black;
                 Vector3 position = new Vector3(-width / 2 + x, -height / 2 + y, 0);
                 Gizmos.DrawCube(position, Vector3.one);
             }
