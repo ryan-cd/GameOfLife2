@@ -22,7 +22,9 @@ public class Main : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-		if (!limitSimulationTime || limitSimulationTime && simulationCount > 0)
+		if (!limitSimulationTime 
+            || limitSimulationTime && simulationCount > 0 
+            || Input.GetMouseButtonDown(0))
         {
             grid.CalculateNextState();
             if (simulationCount > 0)

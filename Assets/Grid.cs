@@ -21,8 +21,8 @@ public class Grid : MonoBehaviour {
                 random = pseudoRandom.Next(0, 100);
                 if (random < 20)
                     grid[x, y] = '#';
-                /*else if (random < 40)
-                    grid[x, y] = '*';*/
+                else if (random < 40)
+                    grid[x, y] = '*';
                 else
                     grid[x, y] = '.';
             }
@@ -69,19 +69,30 @@ public class Grid : MonoBehaviour {
                     surroundings[1]++;
             }
         }
-        
-        if (grid[x, y] == '.' && surroundings[0] == 3)
+        /* Activation */
+        if (grid[x, y] == '.' && (surroundings[0] + surroundings[1] == 3))
+        {
+            return surroundings[0] > surroundings[1] ? '#' : '*';
+        }
+        /* Deactivate */
+        else if (grid[x, y] != '.' && surroundings[0] + surroundings[1] < 2)
+        {
+            return '.';
+        }
+        else if (grid[x, y] != '.' && surroundings[0] + surroundings[1] > 3)
+        {
+            return '.';
+        }
+        /* Flip color */
+        else if (grid[x, y] == '#' && 1 + surroundings[0] <= surroundings[1])
+        {
+            return '*';
+        }
+        else if (grid[x, y] == '*' && 1 + surroundings[1] <= surroundings[0])
         {
             return '#';
         }
-        else if (grid[x, y] == '#' && surroundings[0] < 2)
-        {
-            return '.';
-        }
-        else if (grid[x, y] == '#' && surroundings[0] > 3)
-        {
-            return '.';
-        }
+        /* No change */
         else
         {
             return grid[x, y];
