@@ -21,11 +21,70 @@ public class Grid : MonoBehaviour {
                 random = pseudoRandom.Next(0, 100);
                 if (random < 20)
                     grid[x, y] = '#';
-                else if (random < 40)
-                    grid[x, y] = '*';
+                //else if (random < 40)
+                //    grid[x, y] = '*';
                 else
                     grid[x, y] = '.';
             }
+        }
+    }
+
+    public void CalculateNextState ()
+    {
+        for (int x = 0; x < grid.GetLength(0); x++)
+        {
+            for (int y = 0; y < grid.GetLength(1); y++)
+            {
+                newGrid[x, y] = CalculateCell(x, y);
+            }
+        }
+        grid = newGrid.Clone() as char[,];
+    }
+
+    private char CalculateCell(int x, int y)
+    {
+        int[] surroundings = new int[2];
+        int width = grid.GetLength(0);
+        int height = grid.GetLength(1);
+        int[] neighbourCoords = new int[2];
+        for (int i = x - 1; i <= x + 1; i++)
+        {
+            for (int j = y - 1; j <= y + 1; j++)
+            {
+                if (i == x && j == y)
+                    continue;
+                neighbourCoords[0] = i;
+                neighbourCoords[1] = j;
+                if (i < 0)
+                    neighbourCoords[0] = width - 1;
+                else if (i > width - 1)
+                    neighbourCoords[0] = 0;
+                if (j < 0)
+                    neighbourCoords[1] = grid.GetLength(1) - 1;
+                else if (j > grid.GetLength(1) - 1)
+                    neighbourCoords[1] = 0;
+                if (grid[neighbourCoords[0], neighbourCoords[1]] == '#')
+                    surroundings[0]++;
+                else if (grid[neighbourCoords[0], neighbourCoords[1]] == '*')
+                    surroundings[1]++;
+            }
+        }
+
+        if (grid[x, y] == '.' && surroundings[0] == 3)
+        {
+            return '#';
+        }
+        else if (grid[x, y] == '#' && surroundings[0] < 2)
+        {
+            return '.';
+        }
+        else if (grid[x, y] == '#' && surroundings[0] > 3)
+        {
+            return '.';
+        }
+        else
+        {
+            return grid[x, y];
         }
     }
 }
