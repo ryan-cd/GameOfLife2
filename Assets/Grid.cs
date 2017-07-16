@@ -21,8 +21,8 @@ public class Grid : MonoBehaviour {
                 random = pseudoRandom.Next(0, 100);
                 if (random < 20)
                     grid[x, y] = '#';
-                //else if (random < 40)
-                //    grid[x, y] = '*';
+                /*else if (random < 40)
+                    grid[x, y] = '*';*/
                 else
                     grid[x, y] = '.';
             }
@@ -69,7 +69,7 @@ public class Grid : MonoBehaviour {
                     surroundings[1]++;
             }
         }
-
+        
         if (grid[x, y] == '.' && surroundings[0] == 3)
         {
             return '#';

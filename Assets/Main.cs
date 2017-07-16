@@ -6,18 +6,27 @@ public class Main : MonoBehaviour {
     public int width = 10;
     public int height = 10;
     public int simulationCount = 20;
+    public bool limitSimulationTime;
     public Grid grid;
 	// Use this for initialization
 	void Start () {
         grid = GetComponent<Grid>();
         grid.GenerateGrid(width, height);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetMouseButtonDown(0))
+
+    private void Awake()
+    {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 10;
+    }
+
+    // Update is called once per frame
+    void Update () {
+		if (!limitSimulationTime || limitSimulationTime && simulationCount > 0)
         {
             grid.CalculateNextState();
+            if (simulationCount > 0)
+                simulationCount--;
         }
 	}
 
