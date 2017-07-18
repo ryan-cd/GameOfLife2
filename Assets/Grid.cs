@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Grid : MonoBehaviour {
-    public char[,] grid { get; private set; }
-    public char[,] newGrid;
+    public enum CellTypes { EMPTY, ONE, TWO };
+    public CellTypes[,] grid { get; private set; }
+    public CellTypes[,] newGrid;
     System.Random pseudoRandom = new System.Random(DateTime.Now.Ticks.ToString().GetHashCode());
-	
+
     public void GenerateGrid (int width, int height)
     {
-        grid = new char[width, height];
-        newGrid = new char[width, height];
+        grid = new CellTypes[width, height];
+        newGrid = new CellTypes[width, height];
         int random;
 
         for (int x = 0; x < width; x++)
@@ -20,11 +19,11 @@ public class Grid : MonoBehaviour {
             {
                 random = pseudoRandom.Next(0, 100);
                 if (random < 20)
-                    grid[x, y] = '#';
+                    grid[x, y] = CellTypes.ONE;
                 else if (random < 40)
-                    grid[x, y] = '*';
+                    grid[x, y] = CellTypes.TWO;
                 else
-                    grid[x, y] = '.';
+                    grid[x, y] = CellTypes.EMPTY;
             }
         }
     }
@@ -38,15 +37,16 @@ public class Grid : MonoBehaviour {
                 newGrid[x, y] = CalculateCell(x, y);
             }
         }
-        grid = newGrid.Clone() as char[,];
+        grid = newGrid.Clone() as CellTypes[,];
     }
 
-    private char CalculateCell(int x, int y)
+    private CellTypes CalculateCell(int x, int y)
     {
         int[] surroundings = new int[2];
         int width = grid.GetLength(0);
         int height = grid.GetLength(1);
         int[] neighbourCoords = new int[2];
+
         for (int i = x - 1; i <= x + 1; i++)
         {
             for (int j = y - 1; j <= y + 1; j++)
@@ -63,34 +63,35 @@ public class Grid : MonoBehaviour {
                     neighbourCoords[1] = grid.GetLength(1) - 1;
                 else if (j > grid.GetLength(1) - 1)
                     neighbourCoords[1] = 0;
-                if (grid[neighbourCoords[0], neighbourCoords[1]] == '#')
+                if (grid[neighbourCoords[0], neighbourCoords[1]] == CellTypes.ONE)
                     surroundings[0]++;
-                else if (grid[neighbourCoords[0], neighbourCoords[1]] == '*')
+                else if (grid[neighbourCoords[0], neighbourCoords[1]] == CellTypes.TWO)
                     surroundings[1]++;
             }
         }
+
         /* Activation */
-        if (grid[x, y] == '.' && (surroundings[0] + surroundings[1] == 3))
+        if (grid[x, y] == CellTypes.EMPTY && (surroundings[0] + surroundings[1] == 3))
         {
-            return surroundings[0] > surroundings[1] ? '#' : '*';
+            return surroundings[0] > surroundings[1] ? CellTypes.ONE : CellTypes.TWO;
         }
-        /* Deactivate */
-        else if (grid[x, y] != '.' && surroundings[0] + surroundings[1] < 2)
+        /* Deactivation */
+        else if (grid[x, y] != CellTypes.EMPTY && surroundings[0] + surroundings[1] < 2)
         {
-            return '.';
+            return CellTypes.EMPTY;
         }
-        else if (grid[x, y] != '.' && surroundings[0] + surroundings[1] > 3)
+        else if (grid[x, y] != CellTypes.EMPTY && surroundings[0] + surroundings[1] > 3)
         {
-            return '.';
+            return CellTypes.EMPTY;
         }
-        /* Flip color */
-        else if (grid[x, y] == '#' && 1 + surroundings[0] <= surroundings[1])
+        /* Flip Colors */
+        else if (grid[x, y] == CellTypes.ONE && 1 + surroundings[0] <= surroundings[1])
         {
-            return '*';
+            return CellTypes.TWO;
         }
-        else if (grid[x, y] == '*' && 1 + surroundings[1] <= surroundings[0])
+        else if (grid[x, y] == CellTypes.TWO && 1 + surroundings[1] <= surroundings[0])
         {
-            return '#';
+            return CellTypes.ONE;
         }
         /* No change */
         else

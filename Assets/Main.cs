@@ -1,13 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Main : MonoBehaviour {
     public int width = 10;
     public int height = 10;
+    [Range(1, 60)]
+    public int frameRate = 10;
     public int simulationCount = 20;
-    public bool limitSimulationTime;
+    public bool limitSimulations;
     public Grid grid;
+
 	// Use this for initialization
 	void Start () {
         grid = GetComponent<Grid>();
@@ -17,13 +18,13 @@ public class Main : MonoBehaviour {
     private void Awake()
     {
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 10;
+        Application.targetFrameRate = frameRate;
     }
 
     // Update is called once per frame
     void Update () {
-		if (!limitSimulationTime 
-            || limitSimulationTime && simulationCount > 0 
+		if (!limitSimulations 
+            || limitSimulations && simulationCount > 0 
             || Input.GetMouseButtonDown(0))
         {
             grid.CalculateNextState();
@@ -40,9 +41,9 @@ public class Main : MonoBehaviour {
             {
                 for (int y = 0; y < height; y++)
                 {
-                    if (grid.grid[x, y] == '#')
+                    if (grid.grid[x, y] == Grid.CellTypes.ONE)
                         Gizmos.color = Color.red;
-                    else if (grid.grid[x, y] == '*')
+                    else if (grid.grid[x, y] == Grid.CellTypes.TWO)
                         Gizmos.color = Color.blue;
                     else
                         Gizmos.color = Color.black;
